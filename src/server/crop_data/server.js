@@ -9,6 +9,19 @@ app.listen(3000)
 app.use(bodyParser.json({limit:'10mb'}))
 app.use(bodyParser.urlencoded({extended: true, limit:'10mb'}))
 
+// 删除操作接口
+app.delete('/crop_data', (request, response) => {
+    console.log(request.body);
+    let json = {
+        "code": 1,
+        "msg": "",
+        "data": "删除成功！",
+        "map": {}
+    }
+    response.send(JSON.stringify(json))
+})
+
+// 添加操作接口
 app.post('/crop_data', (request, response) => {
     console.log(request.body);
     let json = {
@@ -20,6 +33,7 @@ app.post('/crop_data', (request, response) => {
     response.send(JSON.stringify(json))
 })
 
+// 修改操作接口
 app.put('/crop_data', (request, response) => {
     console.log(request.body);
     let json = {
@@ -31,6 +45,7 @@ app.put('/crop_data', (request, response) => {
     response.send(JSON.stringify(json))
 })
 
+// 查询操作接口
 app.get('/crop_data/page', (request, response) => {
     const query = {
         page : request.query.page,

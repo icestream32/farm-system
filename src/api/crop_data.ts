@@ -13,6 +13,14 @@ export const addCropData = (params : any) => {
     })
 }
 
+export const deleteCropData = (id : any) => {
+    return service({
+        url: '/crop_data',
+        method: 'delete',
+        data: {id}
+    })
+}
+
 /**
  * 编辑页面查询详情数据
  * @param id 数据id

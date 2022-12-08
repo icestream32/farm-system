@@ -19,11 +19,11 @@
           border
           class="table"
           header-cell-class-name="table-header">
-        <el-table-column prop="id" label="数据ID" width="70" align="center"/>
+        <el-table-column type="index" label="序号" width="70" align="center"/>
         <el-table-column prop="cropType" label="作物类型" align="center"/>
         <el-table-column prop="longitude" label="采样经度" align="center"/>
         <el-table-column prop="latitude" label="采样纬度" align="center"/>
-        <el-table-column prop="date" label="采集时间" align="center"/>
+        <el-table-column prop="date" label="采集时间" sortable align="center"/>
         <el-table-column prop="data" label="实测数据" width="180" align="center"/>
         <el-table-column prop="userId" label="所属用户" align="center"/>
         <el-table-column label="操作" width="180" align="center">
@@ -87,7 +87,7 @@
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Search, Plus} from '@element-plus/icons-vue';
-import {addCropData, editCropData, getCropDataList} from '../api/crop_data';
+import {addCropData, deleteCropData, editCropData, getCropDataList} from '../api/crop_data';
 import e from "express";
 
 interface TableItem {
@@ -136,13 +136,16 @@ const handlePageChange = (val: number) => {
 
 // 删除操作
 const handleDelete = (index: number) => {
+  console.log(index);
   // 二次确认删除
   ElMessageBox.confirm('确定要删除吗？', '提示', {
     type: 'warning'
   })
       .then(() => {
-        ElMessage.success('删除成功');
-        tableData.value.splice(index, 1);
+        deleteCropData(index).then(res => {
+          ElMessage.success('删除成功');
+          getData()
+        })
       })
       .catch(() => {
       });
@@ -150,7 +153,8 @@ const handleDelete = (index: number) => {
 
 // 表格编辑或添加时弹窗和保存
 const classData = reactive({
-  type: ''
+  type: '',
+  index: ''
 })
 const editVisible = ref(false);
 let form = reactive({
@@ -196,10 +200,6 @@ const  saveEdit = (form: any) => {
   }
   getData()
 };
-
-const currentChange = () => {
-
-}
 </script>
 
 <style scoped>
