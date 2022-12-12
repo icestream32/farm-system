@@ -20,22 +20,12 @@
           class="table"
           ref="multipleTable"
           header-cell-class-name="table-header">
-        <el-table-column
-            prop="id"
-            label="数据ID"
-            width="70"
-            align="center"
-        ></el-table-column>
-        <el-table-column prop="cropType" label="作物类型" align="center"></el-table-column>
-        <el-table-column label="监测参数">
-          <template #default="scope" align="center">{{scope.row.param }}</template>
-        </el-table-column>
-        <el-table-column label="监测范围">
-          <template #default="scope" align="center">{{scope.row.area }}</template>
-        </el-table-column>
-        <el-table-column prop="metaDate" label="图层时间" align="center"></el-table-column>
-        <el-table-column prop="metaPath" label="图层路径" width="150" align="center"></el-table-column>
-        <el-table-column prop="metaName" label="图层名称" align="center"></el-table-column>
+        <el-table-column prop="cropType" label="作物类型" align="center"/>
+        <el-table-column prop="param" label="监测参数"/>
+        <el-table-column prop="area" label="监测范围"/>
+        <el-table-column prop="metaDate" label="图层时间" align="center"/>
+        <el-table-column prop="metaPath" label="图层路径" width="150" align="center"/>
+        <el-table-column prop="metaName" label="图层名称" align="center"/>
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
             <el-button
@@ -101,7 +91,7 @@
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Search, Plus} from '@element-plus/icons-vue';
-import {fetchData} from '../api/index';
+import {getLayerMetadataList} from "../api/layer_metadata";
 
 interface TableItem {
   id: number;
@@ -120,7 +110,7 @@ const query = reactive({
   area: "",
   metaDate: "",
   metaPath: "",
-  metaName:"",
+  metaName: "",
   pageIndex: 1,
   pageSize: 10,
 });
@@ -128,8 +118,8 @@ const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
-  fetchData().then(res => {
-    tableData.value = res.data.list;
+  getLayerMetadataList({page: query.pageIndex, pageSize: query.pageSize, name: query.cropType}).then(res => {
+    tableData.value = res.data.records;
     pageTotal.value = res.data.pageTotal || 50;
   });
 };
@@ -168,7 +158,7 @@ let form = reactive({
   area: "",
   metaDate: "",
   metaPath: "",
-  metaName:"",
+  metaName: "",
 });
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
