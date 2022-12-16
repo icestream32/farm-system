@@ -8,6 +8,18 @@ app.listen(3000)
 app.use(bodyParser.json({limit:'10mb'}))
 app.use(bodyParser.urlencoded({extended:true, limit:'10mb'}))
 
+// 添加操作接口
+app.post('/layer_metadata', (req, res) => {
+    console.log(req.body);
+    res.send("添加成功！")
+})
+
+// 修改操作接口
+app.put('/layer_metadata', (request, response) => {
+    console.log(request.body);
+    response.send("修改成功！")
+})
+
 // 查询操作接口
 app.get('/layer_metadata/page', (request, response) => {
     // 打印输出接收到的请求

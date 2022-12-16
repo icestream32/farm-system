@@ -12,7 +12,7 @@
         <el-input v-model="query.cropType" placeholder="作物类型" class="handle-input mr10"></el-input>
         <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
         <!-- 此处需新增添加功能 -->
-        <el-button type="primary" :icon="Plus">添加</el-button>
+        <el-button type="primary" :icon="Plus" @click="menuHandle(form, 'add')">添加</el-button>
       </div>
       <el-table
           :data="tableData"
@@ -31,7 +31,7 @@
             <el-button
                 type="text"
                 icon="el-icon-edit"
-                @click="handleEdit(scope.$index, scope.row)">编辑
+                @click="menuHandle(scope.row, 'edit')">编辑
             </el-button>
             <el-button
                 type="text"
@@ -45,7 +45,7 @@
 
 
       <!-- 编辑弹出框 -->
-      <el-dialog title="修改" v-model="editVisible" width="30%">
+      <el-dialog :title="classData.type === 'add' ? '添加' : '编辑'" v-model="editVisible" width="30%">
         <el-form label-width="70px">
           <el-form-item label="作物类型">
             <el-input v-model="form.cropType"></el-input>
@@ -91,7 +91,7 @@
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Search, Plus} from '@element-plus/icons-vue';
-import {getLayerMetadataList} from "../api/layer_metadata";
+import {addLayerMetadata, editLayerMetadata, getLayerMetadataList} from "../api/layer_metadata";
 
 interface TableItem {
   id: number;
@@ -150,9 +150,14 @@ const handleDelete = (index: number) => {
       });
 };
 
-// 表格编辑时弹窗和保存
+// 表格编辑或添加时弹窗和保存
+const classData = reactive({
+  type: '',
+  index: ''
+})
 const editVisible = ref(false);
 let form = reactive({
+  id: "",
   cropType: "",
   param: "",
   area: "",
@@ -160,20 +165,48 @@ let form = reactive({
   metaPath: "",
   metaName: "",
 });
-let idx: number = -1;
-const handleEdit = (index: number, row: any) => {
-  idx = index;
 
-  // 此处有代码需要修改
-
+const menuHandle = (row: any, type: string) => {
+  classData.type = type
+  if (type === 'edit') {
+    form.id = row.id
+    form.cropType = row.cropType
+    form.param = row.param
+    form.area = row.area
+    form.metaDate = row.metaDate
+    form.metaPath = row.metaPath
+    form.metaName = row.metaName
+  } else {
+    form.id = ''
+    form.cropType = ''
+    form.param = ''
+    form.area = ''
+    form.metaDate = ''
+    form.metaPath = ''
+    form.metaName = ''
+  }
   editVisible.value = true;
 };
 const saveEdit = () => {
   editVisible.value = false;
-  ElMessage.success(`修改第 ${idx + 1} 行成功`);
 
-  /*这里还有代码要填*/
-
+  // 判断是修改还是添加
+  if (classData.type === 'add') {
+    addLayerMetadata(form).then(res => {
+      ElMessage.success("添加成功！")
+    }).catch(err => {
+      ElMessage.error('请求出错：' + err)
+    })
+  } else {
+    editLayerMetadata(form).then(res => {
+      // 返回消息提示
+      ElMessage.success("修改成功！")
+    }).catch(err => {
+      ElMessage.error('请求出错：' + err)
+    })
+  }
+  // 刷新表格数据
+  getData();
 };
 </script>
 

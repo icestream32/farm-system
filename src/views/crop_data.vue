@@ -186,7 +186,7 @@ const menuHandle = (row: any, type: string) => {
   editVisible.value = true;
 };
 
-const  saveEdit = (form: any) => {
+const saveEdit = (form: any) => {
   editVisible.value = false;
   // 判断是添加还是修改
   if (classData.type === 'add') {
