@@ -37,7 +37,7 @@
                 type="text"
                 icon="el-icon-delete"
                 class="red"
-                @click="handleDelete(scope.$index, scope.row)">删除
+                @click="handleDelete(scope.$index)">删除
             </el-button>
           </template>
         </el-table-column>
@@ -91,7 +91,7 @@
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Search, Plus} from '@element-plus/icons-vue';
-import {addLayerMetadata, editLayerMetadata, getLayerMetadataList} from "../api/layer_metadata";
+import {addLayerMetadata, deleteLayerMetadata, editLayerMetadata, getLayerMetadataList} from "../api/layer_metadata";
 
 interface TableItem {
   id: number;
@@ -137,17 +137,19 @@ const handlePageChange = (val: number) => {
 };
 
 // 删除操作
-const handleDelete = (index: number) => {
+const handleDelete = (id: number) => {
   // 二次确认删除
   ElMessageBox.confirm('确定要删除吗？', '提示', {
     type: 'warning'
   })
       .then(() => {
-        ElMessage.success('删除成功');
-        tableData.value.splice(index, 1);
+        deleteLayerMetadata(id).then(res => {
+          ElMessage.success("删除成功！")
+        }).catch(err => {
+          ElMessage.error("删除失败，错误信息：" + err)
+        })
+        getData()
       })
-      .catch(() => {
-      });
 };
 
 // 表格编辑或添加时弹窗和保存
@@ -193,7 +195,7 @@ const saveEdit = () => {
   // 判断是修改还是添加
   if (classData.type === 'add') {
     addLayerMetadata(form).then(res => {
-      ElMessage.success("添加成功！")
+      ElMessage.success("添加成功！");
     }).catch(err => {
       ElMessage.error('请求出错：' + err)
     })

@@ -13,6 +13,10 @@ export const addCropData = (params : any) => {
     })
 }
 
+/**
+ * 修改农田实测数据
+ * @param id 农田数据id
+ */
 export const deleteCropData = (id : any) => {
     return service({
         url: '/crop_data',

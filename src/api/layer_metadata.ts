@@ -14,6 +14,18 @@ export const addLayerMetadata = (params : any) => {
 }
 
 /**
+ * 删除图层元数据
+ * @param id 图层元数据id
+ */
+export const deleteLayerMetadata = (id : any) => {
+    return service({
+        url : 'layer_metadata',
+        method : 'delete',
+        data : {id}
+    })
+}
+
+/**
  * 修改图层元数据
  * @param params 图层元数据
  */

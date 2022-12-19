@@ -14,6 +14,12 @@ app.post('/layer_metadata', (req, res) => {
     res.send("添加成功！")
 })
 
+// 删除操作接口
+app.delete('/layer_metadata', (req, res) => {
+    console.log(req.body);
+    res.send("删除成功！")
+})
+
 // 修改操作接口
 app.put('/layer_metadata', (request, response) => {
     console.log(request.body);
