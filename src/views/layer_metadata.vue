@@ -20,6 +20,7 @@
           class="table"
           ref="multipleTable"
           header-cell-class-name="table-header">
+        <el-table-column type="index" label="序号" width="70" align="center"/>
         <el-table-column prop="cropType" label="作物类型" align="center"/>
         <el-table-column prop="param" label="监测参数"/>
         <el-table-column prop="area" label="监测范围"/>

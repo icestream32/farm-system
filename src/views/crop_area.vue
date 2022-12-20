@@ -20,21 +20,12 @@
           class="table"
           ref="multipleTable"
           header-cell-class-name="table-header">
-        <el-table-column
-            prop="id"
-            label="数据ID"
-            width="70"
-            align="center"
-        ></el-table-column>
-        <el-table-column prop="cropType" label="作物类型" align="center"></el-table-column>
-        <el-table-column prop="cropRange" label="作物范围" align="center"></el-table-column>
-        <el-table-column prop="cropArea" label="作物面积" align="center"></el-table-column>
-        <el-table-column label="开始时间" align="center">
-          <template #default="scope">{{ scope.row.startTime }}</template>
-        </el-table-column>
-        <el-table-column label="结束时间" align="center">
-          <template #default="scope">{{ scope.row.endTime }}</template>
-        </el-table-column>
+        <el-table-column type="index" label="序号" width="70" align="center"/>
+        <el-table-column prop="cropType" label="作物类型" align="center"/>
+        <el-table-column prop="cropRange" label="作物范围" align="center"/>
+        <el-table-column prop="area" label="作物面积" align="center"/>
+        <el-table-column prop="startTime" label="开始时间" align="center"/>
+        <el-table-column prop="endTime" label="结束时间" align="center"/>
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
             <el-button
@@ -100,12 +91,13 @@ import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
 import {fetchData} from '../api/index';
+import {getCropAreaList} from "../api/crop_area";
 
 interface TableItem {
   id: number;
   cropType: String;
   cropRange: String;
-  cropArea: String;
+  area: String;
   startTime: String;
   endTime: String;
 }
@@ -114,7 +106,7 @@ const query = reactive({
   id: "",
   cropType: "",
   cropRange: "",
-  cropArea: "",
+  area: "",
   startTime: "",
   endTime: "",
   pageIndex: 1,
@@ -124,10 +116,13 @@ const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
-  fetchData().then(res => {
-    tableData.value = res.data.list;
-    pageTotal.value = res.data.pageTotal || 50;
-  });
+  getCropAreaList({page : query.pageIndex, pageSize : query.pageSize, name : query.cropType})
+      .then(res => {
+        tableData.value = res.data.records;
+        pageTotal.value = res.data.total || 50;
+      }).catch(err => {
+    console.log(err.message);
+  })
 };
 getData();
 
