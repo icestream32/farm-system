@@ -12,7 +12,7 @@
         <el-input v-model="query.cropType" placeholder="作物类型" class="handle-input mr10"></el-input>
         <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
         <!-- 此处需新增添加功能 -->
-        <el-button type="primary" :icon="Plus">添加</el-button>
+        <el-button type="primary" :icon="Plus" @click="menuHandle(form, 'add')">添加</el-button>
       </div>
       <el-table
           :data="tableData"
@@ -31,7 +31,7 @@
             <el-button
                 type="text"
                 icon="el-icon-edit"
-                @click="handleEdit(scope.$index, scope.row)">编辑
+                @click="menuHandle(scope.row, 'edit')">编辑
             </el-button>
             <el-button
                 type="text"
@@ -45,7 +45,7 @@
 
 
       <!-- 编辑弹出框 -->
-      <el-dialog title="编辑" v-model="editVisible" width="30%">
+      <el-dialog :title="classData.type === 'add' ? '添加' : '编辑'" v-model="editVisible" width="30%">
         <el-form label-width="70px">
           <el-form-item label="作物类型">
             <el-input v-model="form.cropType"></el-input>
@@ -54,7 +54,7 @@
             <el-input v-model="form.cropRange"></el-input>
           </el-form-item>
           <el-form-item label="作物面积">
-            <el-input v-model="form.cropArea"></el-input>
+            <el-input v-model="form.area"></el-input>
           </el-form-item>
           <el-form-item label="开始时间">
             <el-input v-model="form.startTime"></el-input>
@@ -66,9 +66,7 @@
         <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="editVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="saveEdit"
-                    >确 定</el-button
-                    >
+                    <el-button type="primary" @click="saveEdit">确 定</el-button>
                 </span>
         </template>
       </el-dialog>
@@ -91,7 +89,7 @@ import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
 import {fetchData} from '../api/index';
-import {getCropAreaList} from "../api/crop_area";
+import {editCropArea, getCropAreaList} from "../api/crop_area";
 
 interface TableItem {
   id: number;
@@ -101,6 +99,8 @@ interface TableItem {
   startTime: String;
   endTime: String;
 }
+// 返回响应消息
+let msg = ref()
 
 const query = reactive({
   id: "",
@@ -151,29 +151,49 @@ const handleDelete = (index: number) => {
       });
 };
 
-// 表格编辑时弹窗和保存
+// 表格编辑或添加时弹窗和保存
+const classData = reactive({
+  type: '',
+  index: ''
+})
 const editVisible = ref(false);
 let form = reactive({
+  id: '',
   cropType: "",
   cropRange: "",
-  cropArea: "",
+  area: "",
   startTime: "",
   endTime: "",
 });
-let idx: number = -1;
-const handleEdit = (index: number, row: any) => {
-  idx = index;
-
-  // 此处有代码需要编辑
-
+const menuHandle = (row: any, type: string) => {
+  classData.type = type
+  if (type === 'edit') {
+    form.id = row.id
+    form.cropType = row.cropType
+    form.cropRange = row.cropRange
+    form.area = row.area
+    form.startTime = row.startTime
+    form.endTime = row.endTime
+  } else {
+    form.id = ''
+    form.cropType = ''
+    form.cropRange = ''
+    form.area = ''
+    form.startTime = ''
+    form.endTime = ''
+  }
   editVisible.value = true;
 };
 const saveEdit = () => {
   editVisible.value = false;
-  ElMessage.success(`修改第 ${idx + 1} 行成功`);
+  if (classData.type === 'add') {
 
-// 此处有代码需要编辑
-
+  } else {
+    editCropArea(form).then(res => {
+      msg = res.data
+      ElMessage.success(`${msg}`);
+    })
+  }
 };
 </script>
 

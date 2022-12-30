@@ -8,6 +8,18 @@ app.listen(3000)
 app.use(bodyParser.json({limit:'10mb'}))
 app.use(bodyParser.urlencoded({extended: true, limit:'10mb'}))
 
+// 修改接口
+app.put('/crop_area', (req, res) => {
+    console.log(req.body);
+    const json = {
+        "code": 69,
+        "msg": "sint voluptate qui nisi Excepteur",
+        "data": "ullamco",
+        "map": {}
+    }
+    res.send(JSON.stringify(json))
+})
+
 // 查询接口
 app.get('/crop_area', (req, res) => {
     const query = {

@@ -104,6 +104,9 @@ interface TableItem {
   metaName: String;
 }
 
+// 响应消息
+let msg = ref()
+
 const query = reactive({
   id: "",
   cropType: "",
@@ -145,7 +148,8 @@ const handleDelete = (id: number) => {
   })
       .then(() => {
         deleteLayerMetadata(id).then(res => {
-          ElMessage.success("删除成功！")
+          msg = res.data
+          ElMessage.success(`${msg}`)
         }).catch(err => {
           ElMessage.error("删除失败，错误信息：" + err)
         })
@@ -196,14 +200,16 @@ const saveEdit = () => {
   // 判断是修改还是添加
   if (classData.type === 'add') {
     addLayerMetadata(form).then(res => {
-      ElMessage.success("添加成功！");
+      msg = res.data
+      ElMessage.success(`${msg}`);
     }).catch(err => {
       ElMessage.error('请求出错：' + err)
     })
   } else {
     editLayerMetadata(form).then(res => {
       // 返回消息提示
-      ElMessage.success("修改成功！")
+      msg = res.data
+      ElMessage.success(`${msg}`)
     }).catch(err => {
       ElMessage.error('请求出错：' + err)
     })

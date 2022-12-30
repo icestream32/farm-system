@@ -88,7 +88,6 @@ import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Search, Plus} from '@element-plus/icons-vue';
 import {addCropData, deleteCropData, editCropData, getCropDataList} from '../api/crop_data';
-import e from "express";
 
 interface TableItem {
   id: Number;
@@ -99,6 +98,8 @@ interface TableItem {
   date: String;
   data: String;
 }
+
+let msg = ref()
 
 const query = reactive({
   id: "",
@@ -143,7 +144,8 @@ const handleDelete = (index: number) => {
   })
       .then(() => {
         deleteCropData(index).then(res => {
-          ElMessage.success('删除成功');
+          msg = res.data
+          ElMessage.success(`${msg}`);
           getData()
         })
       })
@@ -191,11 +193,13 @@ const saveEdit = (form: any) => {
   // 判断是添加还是修改
   if (classData.type === 'add') {
     addCropData(form).then(res => {
-      ElMessage.success("添加成功！")
+      msg = res.data
+      ElMessage.success(`${msg}`)
     })
   } else {
     editCropData(form).then(res => {
-      ElMessage.success("修改成功！");
+      msg = res.data
+      ElMessage.success(`${msg}`);
     })
   }
   getData()
