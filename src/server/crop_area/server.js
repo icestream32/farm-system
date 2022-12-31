@@ -8,6 +8,18 @@ app.listen(3000)
 app.use(bodyParser.json({limit:'10mb'}))
 app.use(bodyParser.urlencoded({extended: true, limit:'10mb'}))
 
+// 删除接口
+app.delete('/crop_area', (req, res) => {
+    console.log(req.body);
+    const json = {
+        "code": 70,
+        "msg": "ea mollit",
+        "data": "do non sed",
+        "map": {}
+    }
+    res.send(JSON.stringify(json))
+})
+
 // 修改接口
 app.put('/crop_area', (req, res) => {
     console.log(req.body);
