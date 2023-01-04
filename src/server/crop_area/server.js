@@ -8,6 +8,18 @@ app.listen(3000)
 app.use(bodyParser.json({limit:'10mb'}))
 app.use(bodyParser.urlencoded({extended: true, limit:'10mb'}))
 
+// 添加接口
+app.post('/crop_area', (req, res) => {
+    console.log(req.body);
+    const json = {
+        "code": 30,
+        "msg": "eiusmod",
+        "data": "laboris proident elit Duis",
+        "map": {}
+    }
+    res.send(JSON.stringify(json))
+})
+
 // 删除接口
 app.delete('/crop_area', (req, res) => {
     console.log(req.body);

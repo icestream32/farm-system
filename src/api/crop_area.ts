@@ -1,5 +1,13 @@
 import service from "../utils/request";
 
+export const addCropArea = (param : any) => {
+    return service({
+        url : '/crop_area',
+        method : 'post',
+        data : {...param}
+    })
+}
+
 /**
  * 删除作物面积数据信息
  * @param id 作物面积数据id

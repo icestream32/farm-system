@@ -66,7 +66,7 @@
         <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="editVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="saveEdit">确 定</el-button>
+                    <el-button type="primary" @click="saveEdit()">确 定</el-button>
                 </span>
         </template>
       </el-dialog>
@@ -89,7 +89,7 @@ import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
 import {fetchData} from '../api/index';
-import {deleteCropArea, editCropArea, getCropAreaList} from "../api/crop_area";
+import {addCropArea, deleteCropArea, editCropArea, getCropAreaList} from "../api/crop_area";
 
 interface TableItem {
   id: number;
@@ -193,7 +193,10 @@ const menuHandle = (row: any, type: string) => {
 const saveEdit = () => {
   editVisible.value = false;
   if (classData.type === 'add') {
-
+    addCropArea(form).then(res => {
+      msg = res.data
+      ElMessage.success(`${msg}`)
+    })
   } else {
     editCropArea(form).then(res => {
       msg = res.data
