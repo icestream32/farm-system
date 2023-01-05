@@ -25,7 +25,7 @@
 				<div class="login-btn">
 					<el-button type="primary" @click="submitForm(login)">登录</el-button>
 				</div>
-				<p class="login-tips">Tips : 用户名和密码随便填。</p>
+				<p class="login-tips">Tips : 用户名和密码与手机端一致。</p>
 			</el-form>
 		</div>
 	</div>
@@ -39,26 +39,22 @@ import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
+import {loginApi} from "../api/login";
 
 interface LoginInfo {
 	username: string;
 	password: string;
 }
 
+let msg = ref()
 const router = useRouter();
 const param = reactive<LoginInfo>({
-	username: 'admin',
-	password: '123123'
+	username: '',
+	password: ''
 });
 
 const rules: FormRules = {
-	username: [
-		{
-			required: true,
-			message: '请输入用户名',
-			trigger: 'blur'
-		}
-	],
+	username: [{required: true, message: '请输入用户名', trigger: 'blur'}],
 	password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 };
 const permiss = usePermissStore();
@@ -67,14 +63,24 @@ const submitForm = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
 	formEl.validate((valid: boolean) => {
 		if (valid) {
-			ElMessage.success('登录成功');
-			localStorage.setItem('ms_username', param.username);
-			const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
-			permiss.handleSet(keys);
-			localStorage.setItem('ms_keys', JSON.stringify(keys));
-			router.push('/');
+      loginApi(param).then(res => {
+        msg = res.data
+        let code = res.code
+        if (code === 1) {
+          ElMessage.success(`${msg}`);
+          localStorage.setItem('ms_username', param.username);
+          const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
+          permiss.handleSet(keys);
+          localStorage.setItem('ms_keys', JSON.stringify(keys));
+          router.push('/');
+        } else {
+          ElMessage.warning(`${msg}`)
+        }
+      }).catch(err => {
+        ElMessage.error(err.message)
+      })
 		} else {
-			ElMessage.error('登录成功');
+			ElMessage.warning('登录失败，请输入正确的用户名和密码');
 			return false;
 		}
 	});
