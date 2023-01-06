@@ -11,3 +11,13 @@ export const loginApi = (form : any) => {
         data : {...form}
     })
 }
+
+/**
+ * 退出
+ */
+export const logoutApi = () => {
+    return service({
+        url : '/backend/logout',
+        method : 'post'
+    })
+}

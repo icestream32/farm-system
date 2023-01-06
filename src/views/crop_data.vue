@@ -25,7 +25,7 @@
         <el-table-column prop="latitude" label="采样纬度" align="center"/>
         <el-table-column prop="date" label="采集时间" sortable align="center"/>
         <el-table-column prop="data" label="实测数据" width="180" align="center"/>
-        <el-table-column prop="userId" label="所属用户" align="center"/>
+        <el-table-column prop="userId" label="所属用户" v-if="classData.userType === 'admin'" align="center"/>
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
             <el-button
@@ -156,7 +156,8 @@ const handleDelete = (index: number) => {
 // 表格编辑或添加时弹窗和保存
 const classData = reactive({
   type: '',
-  index: ''
+  index: '',
+  userType : localStorage.getItem('ms_username')
 })
 const editVisible = ref(false);
 let form = reactive({
